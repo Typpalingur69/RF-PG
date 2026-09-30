@@ -40,7 +40,7 @@
 
     .logo { position: absolute; left: 30px; top: 30px; }
 
-    .logo h1 { margin: 0; }
+    .logo h1 { margin: 0; font-size: 25px; font-weight: 500;}
 
     /* 4-row grid: [save] [font 1 + lock] [font 2 + lock] [edit] */
     .stage {
@@ -281,7 +281,7 @@ Panel fyrir takkana*/
 <body>
     <main class="hero">
         <div class="logo">
-            <h1 id="logoname">Random<br>Font<br>Pairing<br> Generator<br></h1>
+            <h1 id="logoname">RF-PG</h1>
         </div>
 
         <div class="stage">
@@ -623,6 +623,33 @@ document.addEventListener("keydown", (e) => {
 loadSessionFonts();
 renderMyFonts();
 randomFont();
+// ---------------------------------------------------------------
+// Logo: every letter gets a unique random font, changes every second
+// ---------------------------------------------------------------
+const logoEl = $("logoname");
+logoEl.setAttribute("aria-label", logoEl.textContent);   // screen readers still read "RF-PG"
+
+const logoLetters = [...logoEl.textContent].map((ch) => {
+    const span = document.createElement("span");
+    span.textContent = ch;
+    span.setAttribute("aria-hidden", "true");
+    return span;
+});
+logoEl.replaceChildren(...logoLetters);
+
+function shuffleLogo() {
+    // Fisher-Yates shuffle of a copy of the font list
+    const pool = [...fonts];
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    // letter i gets pool[i], so no two letters can share a font
+    logoLetters.forEach((span, i) => applyFontStyles(span, pool[i]));
+}
+
+shuffleLogo();
+setInterval(shuffleLogo, 1000);
 </script>
 </body>
 </html>
