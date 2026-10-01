@@ -8,25 +8,23 @@
 <style>
     :root {
         --primary-900: #000;
-        --primary-600: #333;
-        --primary-500: #666;
         --primary-400: #d1d1d1;
         --primary-300: #fff;
-
+ 
         --surface-1: var(--primary-900);
-
+ 
         --border-1: var(--primary-300); /*top*/
         --border-2: var(--primary-400); /*bottom*/
-
+ 
         --row: 120px;  /* hæðin á öllum 4 rows */
         --rail: 55px;  /* width á button panel */
     }
-
+ 
     * { box-sizing: border-box; }
     * { font-family: inherit; font-size: inherit; font-weight: inherit; }
     html { scroll-behavior: smooth; }
     body { margin: 0; font-family: "Helvetica"; font-size: 12px; font-weight: 500; background-color: #fff; color:#000 }
-
+ 
     /* First screen: 1 viewport hár, contents centered í því */
     .hero {
         position: relative;
@@ -37,11 +35,11 @@
         align-items: center;
         padding-top: 8px;
     }
-
+ 
     .logo { position: absolute; left: 30px; top: 30px; }
-
+ 
     .logo h1 { margin: 0; font-size: 25px; font-weight: 500;}
-
+ 
     /* 4-row grid: [save] [font 1 + lock] [font 2 + lock] [edit] */
     .stage {
         margin-top: auto;
@@ -52,7 +50,7 @@
         grid-template-columns: 1fr var(--rail);
         grid-template-rows: repeat(4, var(--row));
     }
-
+ 
     /* Shared icon-button st+ilar (lock, save, edit) */
     .icon-btn {
         position: relative;
@@ -60,7 +58,6 @@
         background: none;
         padding: 4px 10px;
         cursor: pointer;
-        font-size: 16px;
         border: 0;
         border-radius: 999px;
     }
@@ -68,21 +65,19 @@
     .save-pair-btn { grid-column: 2; grid-row: 1; place-self: center; }
     .edit-toggle-btn { grid-column: 2; grid-row: 4; place-self: center; }
     .lock-btn { grid-column: 2; place-self: center; border-radius: 0; translate: -5px 0; } 
-
-
+ 
+ 
     .icon-btn img:hover, 
     .remove-pair-btn:hover { transform: scale(1.05) perspective(1px); }
     .randomize:hover { transform: translateX(-32.5px) scale(1.05) perspective(1px); }
-
+ 
     button:focus,
-    button:focus-visible,
-    [contenteditable="true"]:focus,
-    h1:focus {
+    [contenteditable="true"]:focus {
         outline: none !important;
         box-shadow: none !important;
         border-color: transparent !important;
     }
-
+ 
     /* Generate takki, space er main trigger */
     .randomize {
         margin: auto 0;
@@ -95,7 +90,7 @@
         text-align: center;
         transform: translateX(-32.5px);
     }
-
+ 
     .output-row {
         grid-column: 1 / -1;
         display: grid;
@@ -107,7 +102,7 @@
     }
     .row-1 { grid-row: 2; }
     .row-2 { grid-row: 3; }
-
+ 
     .output-row h1 {
         grid-column: 1;
         pointer-events: none;
@@ -119,7 +114,7 @@
         min-width: 0;
         overflow-wrap: anywhere;
     }
-
+ 
     /* Edit mode: outputs verða textboxes */
     h1.edit-mode {
         pointer-events: auto;
@@ -138,20 +133,7 @@
         border-radius: 25px;
     }
     .edit-mode:empty::before { content: attr(data-placeholder); color: #999; }
-
-    .credit {
-    position: absolute;
-    left: 0;
-    bottom: 8px;
-    color: #666;
-    transition: opacity 0.15s;
-    pointer-events: none;
-}
-
-/* hidden while hovering (preview) and in edit mode */
-.output-row.previewing .credit,
-.stage.editing .credit { opacity: 0; }
-
+ 
     /* Saved pairings sit below the first screen */
     .my-fonts-section {
         width: 100%;
@@ -159,15 +141,14 @@
         color: #666;
         background: #000;
     }
-    .my-fonts-section h2 { margin: 0 0 5px; font-size: 15px; }
-
+ 
     .my-fonts-list {
         width: 100%;
         padding-top: 12px;
         display: grid;
         gap: 8px;
     }
-
+ 
     .my-font-card {
         padding: 10px 10px 8px;
         border: 1px solid transparent;
@@ -180,9 +161,9 @@
         gap: 6px;
         transform: translateX(-32.5px);
     }
-
+ 
     .empty-state { color: #666; text-align: center; transform: translateX(-32.5px); }
-
+ 
     .saved-pair-content {
         display: flex;
         flex-direction: column;
@@ -191,10 +172,8 @@
         gap: 4px;
         width: 100%;
     }
-
+ 
     .saved-pair-output {
-        display: block;
-        width: 100%;
         min-height: 24px;
         text-align: center;
         font-size: clamp(12px, 1.7vw, 18px);
@@ -203,16 +182,16 @@
         padding: 2px 0;
         transform: translateZ(0);
     }
-
+ 
     .saved-pair-line {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
         align-items: baseline;
         width: 100%;
     }
-
+ 
     .saved-pair-line .saved-pair-output { grid-column: 2; width: auto; }
-
+ 
     .saved-credit {
         grid-column: 3;
         justify-self: start;
@@ -220,7 +199,7 @@
         white-space: nowrap;
         color: #666;
     }
-
+ 
     .remove-pair-btn {
         align-self: center;
         border: 1px solid #fff;
@@ -229,9 +208,8 @@
         border-radius: 999px;
         padding: 4px 8px;
         cursor: pointer;
-        font-size: 12px;
     }
-
+ 
     /*---------------------------------------------------------------
 Panel fyrir takkana*/
     .rail-bg {
@@ -242,7 +220,7 @@ Panel fyrir takkana*/
         overflow: hidden;
         background: hsl(from var(--surface-1) h s l  / 0.03);
     }
-
+ 
     .rail-bg::before {
         content: "";
         border: 0.5px solid transparent;
@@ -256,55 +234,15 @@ Panel fyrir takkana*/
         -webkit-mask-composite: xor;
         mask-composite: exclude;
     }
-
-    /*
-    .Btn-panel {
-        position: absolute;
-        left: 28px;
-        top: 35%;
-        width: 50px;
-        height: 200px;
-        border-radius: 25px;
-        background: var(--panel-bg);
-        overflow: hidden;
-        background: hsl(from var(--surface-1) h s l  / 0.1);
-    }
-
-    .Btn-panel::before {
-        content: "";
-        border: 0.5px solid transparent;
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: linear-gradient(var(--border-1), var(--border-2)) border-box;
-        -webkit-mask:
-            linear-gradient(#000 0 0) padding-box,
-            linear-gradient(#000 0 0) border-box;
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-    }
-    */
-
+ 
     .arrow-link { margin-bottom: 3vh; transform: translateX(-32.5px); }
     .arrow { display: block; width: 20px; height: 20px; } 
     .arrow:hover { transform: scale(1.05) perspective(1px); }
-
-    /* background-vid fyllir skjáinn í öllum aspect ratios */
-    .background-vid {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-    }
-
+ 
     /* símar / þröngir gluggar */
     @media (max-width: 700px) {
         :root { --row: 96px; }
-        .stage {  margin-top: auto; width: 100%; padding: 0 35px; display: grid; grid-template-columns: var(--rail) 1fr var(--rail);
- grid-template-rows: repeat(4, var(--row));}
-
+        .stage { padding: 0 35px; grid-template-columns: var(--rail) 1fr var(--rail); }
     }
 </style>
 </head>
@@ -313,31 +251,29 @@ Panel fyrir takkana*/
         <div class="logo">
             <h1 id="logoname">RF-PG</h1>
         </div>
-
+ 
         <div class="stage">
             <div class="rail-bg"></div>
-
+ 
             <button class="icon-btn save-pair-btn" id="saveBtn"><img src="icons/unsaved.svg" alt="Save this pairing"></button>
-
+ 
             <div class="output-row row-1">
                 <h1 id="output" data-placeholder="Write something...">Font 1</h1>
-                 <span class="credit" id="credit1"></span>
                 <button class="icon-btn lock-btn" id="lock1"><img src="icons/Asset 2.svg" alt="Unlock font 1"></button>
             </div>
             <div class="output-row row-2">
                 <h1 id="output2" data-placeholder="Write something...">Font 2</h1>
-                 <span class="credit" id="credit2"></span>
                 <button class="icon-btn lock-btn" id="lock2"><img src="icons/Asset 2.svg" alt="Unlock font 2"></button>
             </div>
-
+ 
             <button class="icon-btn edit-toggle-btn" id="editBtn"><img src="icons/edit-off.svg" alt="Turn outputs into textboxes"></button>
         </div>
-
+ 
         <button class="randomize" id="randomBtn">Press spacebar to randomize</button>
-
+ 
         <a class="arrow-link" href="#saved"><img class="arrow" src="icons/arrow.svg" alt="Scroll to saved pairings"></a>
     </main>
-
+ 
     <section class="my-fonts-section" id="saved">
         <div id="my-fonts-list" class="my-fonts-list"></div>
     </section>
@@ -436,9 +372,9 @@ const FONT_FILES = {
 };
  
 const fonts = Object.keys(FONT_FILES);
-
-// Creator per font family. A font name is matched by its start,
-// so "Space Mono Bold Italic" finds "Space Mono".
+ 
+// Creator per font family. þannig font name er matched eftir byrjun,
+// þannig "Space Mono Bold Italic" finnur "Space Mono".
 const CREATORS = {
     "Abril Fatface": "Veronika Burian, José Scaglione (TypeTogether)",
     "Aldrich": "Matthew Desmond",
@@ -493,13 +429,13 @@ const CREATORS = {
     "Times New Roman": "Stanley Morison, Victor Lardent",
     "Wix Made for Text": "Dalton Maag",
     "Work Sans": "Wei Huang"
-    // add the rest: "Font family start": "Creator"
+    //"Font family": "Creator"
 };
-
+ 
 function creatorOf(name) {
     const key = Object.keys(CREATORS)
         .filter((k) => name.startsWith(k))
-        .sort((a, b) => b.length - a.length)[0];   // longest match wins
+        .sort((a, b) => b.length - a.length)[0];   // lengsta match vinnur
     return key ? CREATORS[key] : "";
 }
  
@@ -560,7 +496,7 @@ function applyFontStyles(el, name) {
  
 function renderMyFonts() {
     myFontsList.replaceChildren();
-
+ 
     if (!sessionFonts.length) {
         const empty = document.createElement("p");
         empty.className = "empty-state";
@@ -568,24 +504,24 @@ function renderMyFonts() {
         myFontsList.appendChild(empty);
         return;
     }
-
+ 
     const frag = document.createDocumentFragment();
     sessionFonts.forEach((pair, index) => {
         const card = document.createElement("div");
         card.className = "my-font-card";
-
+ 
         const content = document.createElement("div");
         content.className = "saved-pair-content";
         for (const name of [pair.font1, pair.font2]) {
             const line = document.createElement("div");
             line.className = "saved-pair-line";
-
+ 
             const span = document.createElement("span");
             span.className = "saved-pair-output";
             span.textContent = name;
             applyFontStyles(span, name);
             line.appendChild(span);
-
+ 
             const creator = creatorOf(name);
             if (creator) {
                 const credit = document.createElement("span");
@@ -593,16 +529,16 @@ function renderMyFonts() {
                 credit.textContent = `by ${creator}`;
                 line.appendChild(credit);
             }
-
+ 
             content.appendChild(line);
         }
-
+ 
         const remove = document.createElement("button");
         remove.className = "remove-pair-btn";
         remove.type = "button";
         remove.textContent = "Delete";
         remove.dataset.index = index;
-
+ 
         card.append(content, remove);
         frag.appendChild(card);
     });
@@ -650,8 +586,7 @@ function toggleLock(i) {
 // Uniform random pick sem kemur í veg fyrir sömu aftur og aftur
 function pickFont(exclude) {
     const pool = fonts.filter((f) => !exclude.includes(f));
-    const list = pool.length ? pool : fonts;
-    return list[Math.floor(Math.random() * list.length)];
+    return pool[Math.floor(Math.random() * pool.length)];
 }
  
 function setFont(i, name) {
@@ -675,14 +610,14 @@ function randomFont() {
 // Hover preview og edit mode
 // ---------------------------------------------------------------
 const previewing = [false, false];
-
+ 
 function setPreview(i, on) {
     if (editMode || previewing[i] === on) return;
     previewing[i] = on;
     outputs[i].textContent = on ? HOVER_TEXT : current[i];
     outputs[i].style.fontSize = on ? "clamp(24px, 2.6vw, 50px)" : "";
 }
-
+ 
 document.querySelectorAll(".output-row").forEach((row, i) => {
     // mousemove (ekki mouseenter) þannig hovering á lock btn kveikir ekki á preview
     row.addEventListener("mousemove", (e) => setPreview(i, !e.target.closest(".lock-btn")));
@@ -735,11 +670,11 @@ loadSessionFonts();
 renderMyFonts();
 randomFont();
 // ---------------------------------------------------------------
-// Logo: every letter gets a unique random font, changes every second
+// Logo: hver einasti stafur fær unique random font, sem breytist hverja sek
 // ---------------------------------------------------------------
 const logoEl = $("logoname");
-logoEl.setAttribute("aria-label", logoEl.textContent);   // screen readers still read "RF-PG"
-
+logoEl.setAttribute("aria-label", logoEl.textContent);   // screen readers eru ennþa "RF-PG"
+ 
 const logoLetters = [...logoEl.textContent].map((ch) => {
     const span = document.createElement("span");
     span.textContent = ch;
@@ -747,18 +682,18 @@ const logoLetters = [...logoEl.textContent].map((ch) => {
     return span;
 });
 logoEl.replaceChildren(...logoLetters);
-
+ 
 function shuffleLogo() {
-    // Fisher-Yates shuffle of a copy of the font list
+    // Fisher-Yates shuffle af copy af font listanum
     const pool = [...fonts];
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    // letter i gets pool[i], so no two letters can share a font
+    // letter i sækir pool[i], þannig engin 2 stafir nota sama font
     logoLetters.forEach((span, i) => applyFontStyles(span, pool[i]));
 }
-
+ 
 shuffleLogo();
 setInterval(shuffleLogo, 1000);
 </script>
