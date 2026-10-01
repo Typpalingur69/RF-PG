@@ -139,6 +139,19 @@
     }
     .edit-mode:empty::before { content: attr(data-placeholder); color: #999; }
 
+    .credit {
+    position: absolute;
+    left: 0;
+    bottom: 8px;
+    color: #666;
+    transition: opacity 0.15s;
+    pointer-events: none;
+}
+
+/* hidden while hovering (preview) and in edit mode */
+.output-row.previewing .credit,
+.stage.editing .credit { opacity: 0; }
+
     /* Saved pairings sit below the first screen */
     .my-fonts-section {
         width: 100%;
@@ -189,6 +202,23 @@
         overflow-wrap: anywhere;
         padding: 2px 0;
         transform: translateZ(0);
+    }
+
+    .saved-pair-line {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: baseline;
+        width: 100%;
+    }
+
+    .saved-pair-line .saved-pair-output { grid-column: 2; width: auto; }
+
+    .saved-credit {
+        grid-column: 3;
+        justify-self: start;
+        margin-left: 12px;
+        white-space: nowrap;
+        color: #666;
     }
 
     .remove-pair-btn {
@@ -291,10 +321,12 @@ Panel fyrir takkana*/
 
             <div class="output-row row-1">
                 <h1 id="output" data-placeholder="Write something...">Font 1</h1>
+                 <span class="credit" id="credit1"></span>
                 <button class="icon-btn lock-btn" id="lock1"><img src="icons/Asset 2.svg" alt="Unlock font 1"></button>
             </div>
             <div class="output-row row-2">
                 <h1 id="output2" data-placeholder="Write something...">Font 2</h1>
+                 <span class="credit" id="credit2"></span>
                 <button class="icon-btn lock-btn" id="lock2"><img src="icons/Asset 2.svg" alt="Unlock font 2"></button>
             </div>
 
@@ -404,6 +436,72 @@ const FONT_FILES = {
 };
  
 const fonts = Object.keys(FONT_FILES);
+
+// Creator per font family. A font name is matched by its start,
+// so "Space Mono Bold Italic" finds "Space Mono".
+const CREATORS = {
+    "Abril Fatface": "Veronika Burian, José Scaglione (TypeTogether)",
+    "Aldrich": "Matthew Desmond",
+    "AlienBlock": "Kensuke Uchida",
+    "Archivo Black": "Hector Gatti",
+    "Astloch": "Dan Rhatigan",
+    "Bebas Neue": "Ryoichi Tsunekawa",
+    "Bodoni": "Giambattista Bodoni",
+    "Bold Analogue Sans": "Doni Purwoko",
+    "Courier Prime": "Alan Dague-Greene",
+    "Cudeco": "Ismael Eyþór Rodrigo Benitez",
+    "Dancing Script": "Pablo Impallari",
+    "Danfo": "Seyi Olusanya, David Udoh, Eyiyemi Adegbite, Mirko Velimirović",
+    "DM Serif": "Colophon Foundry, Frank Grießhammer",
+    "Fjalla One": "Irina Smirnova, Eben Sorkin",
+    "Fredoka": "Milena Brandão, Hafontia",
+    "Frutiger": "Adrian Frutiger",
+    "Geo": "Ben Weiner",
+    "Gravitas One": "Riccardo De Franceschi",
+    "Helvetica": "Max Miedinger",
+    "Idiqlat": "SIL International",
+    "Imbue": "Tyler Finck",
+    "Instrument Serif": "Rodrigo Fuenzalida, Jordan Egstad",
+    "Jim Nightshade": "Astigmatic",
+    "Lora": "Olga Karpushina, Alexei Vanyashin",
+    "Luxurious Script": "Robert E. Leuschke",
+    "Mea Culpa": "Robert E. Leuschke",
+    "Mogra": "Lipi Raval",
+    "Monoton": "Vernon Adams",
+    "Monsieur La Doulaise": "Alejandro Paul",
+    "Numbero": "Icep A. Fadhil, Figuree Studio",
+    "Orbitron": "Matt McInerney",
+    "Pacifico": "Vernon Adams, Jacques Le Bailly, Botjo Nikoltchev, Ani Petrova",
+    "Play": "Jonas Hecksher",
+    "Playfair Display": "Claus Eggers Sørensen",
+    "Playwrite": "Veronika Burian, José Scaglione",
+    "Pochaevsk": "Aleksandr Andreev",
+    "Vielotta": "Shiddiq Roihan, Amorfatype Studios",
+    "Weird Talks": "Salamahtype",
+    "UnifrakturMaguntia": "j. 'mach' wust, Peter Wiegel, Carl Albert Fahrenwaldt",
+    "VT323": "Peter Hull",
+    "Rethink": "Hans Thiessen",
+    "Rye": "Nicole Fally",
+    "Sen": "Kosal Sen",
+    "Smokum": "Astigmatic (Brian J. Bonislawsky)",
+    "Space Mono": "Colophon Foundry, Benjamin Critton",
+    "Special Elite": "Astigmatic (Brian J. Bonislawsky)",
+    "Special Gothic": "Alistair McCready",
+    "Squada One": "Joe Prince",
+    "Sugar Magic Serif": "Doni Purwoko, Zeenesia Studio",
+    "Tangerine": "Toshi Omagari",
+    "Times New Roman": "Stanley Morison, Victor Lardent",
+    "Wix Made for Text": "Dalton Maag",
+    "Work Sans": "Wei Huang"
+    // add the rest: "Font family start": "Creator"
+};
+
+function creatorOf(name) {
+    const key = Object.keys(CREATORS)
+        .filter((k) => name.startsWith(k))
+        .sort((a, b) => b.length - a.length)[0];   // longest match wins
+    return key ? CREATORS[key] : "";
+}
  
 // byggir allar @font face reglur frá const fonts
 document.getElementById("font-faces").textContent = fonts.map((name) => {
@@ -462,7 +560,7 @@ function applyFontStyles(el, name) {
  
 function renderMyFonts() {
     myFontsList.replaceChildren();
- 
+
     if (!sessionFonts.length) {
         const empty = document.createElement("p");
         empty.className = "empty-state";
@@ -470,28 +568,41 @@ function renderMyFonts() {
         myFontsList.appendChild(empty);
         return;
     }
- 
+
     const frag = document.createDocumentFragment();
     sessionFonts.forEach((pair, index) => {
         const card = document.createElement("div");
         card.className = "my-font-card";
- 
+
         const content = document.createElement("div");
         content.className = "saved-pair-content";
         for (const name of [pair.font1, pair.font2]) {
+            const line = document.createElement("div");
+            line.className = "saved-pair-line";
+
             const span = document.createElement("span");
             span.className = "saved-pair-output";
             span.textContent = name;
             applyFontStyles(span, name);
-            content.appendChild(span);
+            line.appendChild(span);
+
+            const creator = creatorOf(name);
+            if (creator) {
+                const credit = document.createElement("span");
+                credit.className = "saved-credit";
+                credit.textContent = `by ${creator}`;
+                line.appendChild(credit);
+            }
+
+            content.appendChild(line);
         }
- 
+
         const remove = document.createElement("button");
         remove.className = "remove-pair-btn";
         remove.type = "button";
         remove.textContent = "Delete";
         remove.dataset.index = index;
- 
+
         card.append(content, remove);
         frag.appendChild(card);
     });
