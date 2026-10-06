@@ -22,8 +22,20 @@
  
     * { box-sizing: border-box; }
     * { font-family: inherit; font-size: inherit; font-weight: inherit; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; font-family: "Helvetica"; font-size: 12px; font-weight: 500; background-color: #fff; color:#000 }
+    html {
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    body { margin: 0; font-family: "Helvetica"; font-size: 12px; font-weight: 500; background-color: #fff; color:#000;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none;
+    }
  
     /* First screen: 1 viewport hár, contents centered í því */
     .hero {
